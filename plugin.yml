@@ -1,0 +1,3 @@
+name: MinecraftStats
+main: de.pdinklag.mcstats.MinecraftStatsPlugin
+version: 1.0
