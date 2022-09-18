@@ -14,8 +14,9 @@ public final class MinecraftStatsPlugin extends JavaPlugin {
     private static final String CONFIG_JSON_FILE_NAME = "config.json";
 
     private static final long TICKS_PER_SECOND = 20;
+    private static final long TICKS_PER_MINUTE = 60 * TICKS_PER_SECOND;
 
-    private long updateInterval = 5 * 60 * TICKS_PER_SECOND; // TODO: make configurable
+    private long updateInterval;
 
     private File dataFolder;
     private File repositoryFolder;
@@ -41,6 +42,10 @@ public final class MinecraftStatsPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // load config
+        saveDefaultConfig();
+        updateInterval = getConfig().getLong("updateInterval") * TICKS_PER_MINUTE;
+
         // init directories
         dataFolder = getDataFolder();
         if (!dataFolder.exists()) {
