@@ -1,2 +1,5 @@
+binaries:
+  git: null
+  python3: null
 target: null
 updateInterval: 5

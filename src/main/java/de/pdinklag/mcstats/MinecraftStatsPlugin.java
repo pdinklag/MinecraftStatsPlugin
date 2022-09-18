@@ -3,6 +3,7 @@ package de.pdinklag.mcstats;
 import java.io.File;
 import java.io.IOException;
 
+import org.bukkit.configuration.Configuration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -11,6 +12,15 @@ import org.bukkit.plugin.java.JavaPlugin;
  * updates via a MinecraftStatsUpdateTask.
  */
 public final class MinecraftStatsPlugin extends JavaPlugin {
+    private static final String[] PYTHON3_PROBE_PATHS = new String[] {
+            "python3",
+            "/usr/bin/python3",
+            "/usr/local/bin/python3" };
+    private static final String[] GIT_PROBE_PATHS = new String[] {
+            "git",
+            "/usr/bin/git",
+            "/usr/local/bin/git" };
+
     private static final String WEB_SUBFOLDER_NAME = "mcstats";
     private static final String CONFIG_JSON_FILE_NAME = "config.json";
 
@@ -22,11 +32,22 @@ public final class MinecraftStatsPlugin extends JavaPlugin {
 
     private long updateInterval;
 
+    private String python3Binary;
+    private String gitBinary;
+
     private File dataFolder;
     private File repositoryFolder;
     private File configJsonFile;
 
     private UpdateTask updater;
+
+    String getPython3Binary() {
+        return python3Binary;
+    }
+
+    String getGitBinary() {
+        return gitBinary;
+    }
 
     File getRepositoryFolder() {
         return repositoryFolder;
@@ -44,18 +65,49 @@ public final class MinecraftStatsPlugin extends JavaPlugin {
         updater.runTaskTimerAsynchronously(this, 0, updateInterval);
     }
 
-    private void setConfigTarget(String target) {
-        getConfig().set("target", target);
-        saveConfig();
-    }
-
     @Override
     public void onEnable() {
         //
+        Configuration config = getConfig();
+        boolean configModified = false;
         saveDefaultConfig();
 
+        // probe for Python3
+        python3Binary = config.getString("binaries.python3", null);
+        if (python3Binary == null) {
+            python3Binary = BinaryProber.probe(PYTHON3_PROBE_PATHS);
+            if (python3Binary != null) {
+                getLogger().info("found python3: " + python3Binary);
+                config.set("binaries.python3", python3Binary);
+                configModified = true;
+            }
+        }
+
+        if (python3Binary == null) {
+            getLogger().warning("failed to locate python3 binary -- please specify it manually in config.yml");
+            getLogger().info("DEBUG: $PATH=" + System.getenv("PATH"));
+            return;
+        }
+
+        // probe for git
+        gitBinary = config.getString("binaries.git", null);
+        if (gitBinary == null) {
+            gitBinary = BinaryProber.probe(GIT_PROBE_PATHS);
+            if (gitBinary != null) {
+                getLogger().info("found git: " + gitBinary);
+                config.set("binaries.git", gitBinary);
+                configModified = true;
+            }
+        }
+
+        if (gitBinary == null) {
+            getLogger().warning("failed to locate git binary -- please specify it manually in config.yml");
+            getLogger().info("DEBUG: $PATH=" + System.getenv("PATH"));
+            return;
+        }
+
         // try and find a webserver
-        String target = getConfig().getString("target", null);
+        String target = config.getString("target", null);
         if (target == null) {
             // detect a plugin known to have a webserver
             Plugin dynmapPlugin = getServer().getPluginManager().getPlugin(DYNMAP_PLUGIN_NAME);
@@ -65,7 +117,8 @@ public final class MinecraftStatsPlugin extends JavaPlugin {
 
                 target = dynmapTarget.getAbsolutePath();
                 getLogger().info("Found dynmap -- setting target to \"" + target + "\"");
-                setConfigTarget(target);
+                config.set("target", target);
+                configModified = true;
             }
         }
 
@@ -76,8 +129,13 @@ public final class MinecraftStatsPlugin extends JavaPlugin {
 
         repositoryFolder = new File(target).getAbsoluteFile();
 
-        // load config
-        updateInterval = getConfig().getLong("updateInterval") * TICKS_PER_MINUTE;
+        // maybe save config
+        if (configModified) {
+            saveConfig();
+        }
+
+        // settings
+        updateInterval = config.getLong("updateInterval") * TICKS_PER_MINUTE;
 
         // init data folder
         dataFolder = getDataFolder();

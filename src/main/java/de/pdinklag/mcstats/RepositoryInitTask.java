@@ -26,13 +26,13 @@ public final class RepositoryInitTask extends BukkitRunnable {
             if (repoFolder.exists()) {
                 // update
                 p = Runtime.getRuntime().exec(
-                        new String[] { "git", "pull" },
+                        new String[] { plugin.getGitBinary(), "pull" },
                         new String[0],
                         repoFolder);
             } else {
                 // clone
                 p = Runtime.getRuntime().exec(
-                        new String[] { "git", "clone", REPOSITORY_URL, repoFolder.getAbsolutePath() },
+                        new String[] { plugin.getGitBinary(), "clone", REPOSITORY_URL, repoFolder.getAbsolutePath() },
                         new String[0]);
             }
 

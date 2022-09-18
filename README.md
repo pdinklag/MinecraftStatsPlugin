@@ -28,7 +28,11 @@ When you change a configuration, use `/reload` on your server to apply it right 
 
 #### Plugin
 
-When you run the plugin for the first time, the file `config.yml` will be created. It has only two entries:
+When you run the plugin for the first time, the file `config.yml` will be created. It contains the following settings:
+
+* `binaries`
+  * `git` - The path to the `git` binary on the host. This will be filled automatically if possible.
+  * `python3` - The path to the `python3` binary on the host. This will be filled automatically if possible.
 
 * `target` - This is the path to where *MinecraftStats* will be installed. This should be under your webserver's document root. If you use dynmap, the plugin will automatically fill this in for you.
 * `updateInterval` - The stats will be updated every this many minutes.

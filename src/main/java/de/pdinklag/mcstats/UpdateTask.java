@@ -38,7 +38,7 @@ public final class UpdateTask extends BukkitRunnable {
         plugin.getLogger().info("Running update ...");
         try {
             Process p = Runtime.getRuntime().exec(
-                    new String[] { "python3", UPDATE_SCRIPT, plugin.getConfigJsonFile().getAbsolutePath() },
+                    new String[] { plugin.getPython3Binary(), UPDATE_SCRIPT, plugin.getConfigJsonFile().getAbsolutePath() },
                     new String[0],
                     plugin.getRepositoryFolder());
 
