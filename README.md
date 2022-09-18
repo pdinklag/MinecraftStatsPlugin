@@ -1,4 +1,8 @@
+:warning: *This plugin is currently in development and may not fully work yet. Please join the Discord if you would like to try it.*
+
 # MinecraftStatsPlugin
+
+[![Discord](https://img.shields.io/discord/850982115633790976.svg?label=Discord&logo=discord&logoColor=ffffff&color=8399E8&labelColor=7A7EC2)](https://discord.gg/brH5PGG8By)
 
 This is a Bukkit plugin that installs [*MinecraftStats*](https://github.com/pdinklag/MinecraftStats) in a supported plugin's webserver and regularly updates it automatically. This enables you to use *MinecraftStats* on a hoster without the need of any SSH access to the host. 
 
