@@ -36,7 +36,7 @@ public final class MinecraftStatsPlugin extends JavaPlugin {
     private File repoFolder;
     private File configFile;
     
-    private MinecraftStatsUpdateTask updater;
+    private UpdateTask updater;
     
     File getRepoFolder() {
         return repoFolder;
@@ -93,7 +93,7 @@ public final class MinecraftStatsPlugin extends JavaPlugin {
             getLogger().info("initialized successfully");
 
             // schedule updater
-            updater = new MinecraftStatsUpdateTask(this);
+            updater = new UpdateTask(this);
             updater.runTaskTimerAsynchronously(this, 0, updateInterval);
         } catch(Exception ex) {
             getLogger().warning(ex.getMessage());

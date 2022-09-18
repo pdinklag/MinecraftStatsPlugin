@@ -10,7 +10,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 /**
  * Runs MinecraftStats' update.py script and writes the result to log files.
  */
-public final class MinecraftStatsUpdateTask extends BukkitRunnable {
+public final class UpdateTask extends BukkitRunnable {
     private static final String UPDATE_SCRIPT = "update.py";
     private static final String UPDATE_LOG = "update.log";
     private static final String UPDATE_ERROR_LOG = "update-error.log";
@@ -19,7 +19,7 @@ public final class MinecraftStatsUpdateTask extends BukkitRunnable {
     
     private boolean updating = false;
     
-    public MinecraftStatsUpdateTask(MinecraftStatsPlugin plugin) {
+    public UpdateTask(MinecraftStatsPlugin plugin) {
         this.plugin = plugin;
     }
     
